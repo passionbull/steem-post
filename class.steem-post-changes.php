@@ -57,24 +57,38 @@ class Steem_Post_Changes {
 	
 	// https://wordpress.stackexchange.com/questions/50770/add-javascript-when-post-is-published
 	function register_scripts($page) {
-	    if ($page == 'post.php') 
-	    {
-				$options = $this->get_options();
+		global $post; 
 
-				$the_title = get_the_title($this->test_post_id);
-				$content = get_post($this->test_post_id);
-				$content = apply_filters('the_content', $content);
+	    if ( $page == 'post-new.php' || $page == 'post.php' ) {
+	    		error_log("Post type ". $post->post_type);
+	        if ( 'post' === $post->post_type && isset($_GET['message']) ) { 
+				$message_id = absint( $_GET['message'] );
+				$options = $this->get_options();
+				$the_title = $post->post_title;
+				$content = apply_filters('the_content', $post->post_content);
 				$content = str_replace(']]>', ']]&gt;', $content);
 
-				error_log("Post ID ". $this->test_post_id);
-				error_log("Post ID ". Steem_Post_Changes::$current_post->ID);
-				error_log("ID ". $options['emails'][0]);
-				error_log("Token ". $options['emails'][1]);
-				error_log("Tags ". $options['emails'][2]);
-				error_log("the_title ". $the_title);
-				error_log("content ". $content);
-				wp_enqueue_script('test', plugins_url('test.js', __FILE__), true);
-		}
+				#error_log("Post ID ". $post->ID);
+				#error_log("ID ". $options['emails'][0]);
+				#error_log("Token ". $options['emails'][1]);
+				#error_log("Tags ". $options['emails'][2]);
+				#error_log("the_title ". $the_title);
+				#error_log("content ". $content);
+				wp_register_script( 'steem.min', 'https://cdn.steemjs.com/lib/latest/steem.min.js' );
+
+				wp_enqueue_script('test', plugins_url('/test/steem-post.js', __FILE__), array( 'jquery', 'steem.min' ), true);
+				$data = array( 'ID' => $options['emails'][0],
+							'Token' => $options['emails'][1],
+							'Tags' => $options['emails'][2],
+							'Title' => $the_title,
+							'Content' => $content,
+							'Message' => $message_id,
+							'Post_ID' => $post->ID,
+							'Slug' => $post->post_name
+				);
+				wp_localize_script( 'test', 'wpsePost', $data );
+	        }
+	    }
 	}
 
 
