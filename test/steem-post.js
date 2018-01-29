@@ -1,10 +1,7 @@
-<html>
-<head>
-<title>steem-js posting example</title>
-<script src="jquery-3.2.1.min.js"></script>
-<script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
-<script language="JavaScript">
 
+function test() {
+   alert( 'Hello, world!' );
+}
 
 function postArticleIndetails(token, author, main_tag, title, content, tag_array )
 {
@@ -42,18 +39,4 @@ function postArticle()
      function(err, result) {
         console.log(err, result);
     });
-
 }
-</script>
-<link href='https://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'>
-</head>
-
-
-<body onLoad="postArticleIndetails
-('5JLtZpULiMgRA792itR7beCpFAEubfjjrV2X3YzXzRFCFmDBLd3', 'passionbull', 'wordpress',
-'This is test for wordpress plugin second', 'If I write post on wordpress, it updates to steemit.',
-['wordpress', 'test'])">
-
-    
-</body>
-</html>

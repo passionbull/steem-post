@@ -1,5 +1,6 @@
 <?php
 
+
 class Steem_Post_Changes {
 	var $defaults;
 
@@ -7,6 +8,11 @@ class Steem_Post_Changes {
 	var $right_post;
 
 	var $text_diff;
+	static $isPost;
+	static $current_post;
+	var $test_post_id;
+
+	
 
 	const ADMIN_PAGE = 'steem_post_changes';
 	const OPTION_GROUP = 'steem_post_changes';
@@ -32,6 +38,9 @@ class Steem_Post_Changes {
 			'drafts'     => 0,
 		) );
 
+		Steem_Post_Changes::$isPost = 0;
+		Steem_Post_Changes::$current_post = null;
+
 		$options = $this->get_options();
 
 		if ( $options['enable'] ) {
@@ -43,7 +52,31 @@ class Steem_Post_Changes {
 		if ( current_user_can( 'manage_options' ) ) {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ), 115 );
 		}
+		add_action('admin_enqueue_scripts', array($this, 'register_scripts'));
 	}
+	
+	// https://wordpress.stackexchange.com/questions/50770/add-javascript-when-post-is-published
+	function register_scripts($page) {
+	    if ($page == 'post.php') 
+	    {
+				$options = $this->get_options();
+
+				$the_title = get_the_title($this->test_post_id);
+				$content = get_post($this->test_post_id);
+				$content = apply_filters('the_content', $content);
+				$content = str_replace(']]>', ']]&gt;', $content);
+
+				error_log("Post ID ". $this->test_post_id);
+				error_log("Post ID ". Steem_Post_Changes::$current_post->ID);
+				error_log("ID ". $options['emails'][0]);
+				error_log("Token ". $options['emails'][1]);
+				error_log("Tags ". $options['emails'][2]);
+				error_log("the_title ". $the_title);
+				error_log("content ". $content);
+				wp_enqueue_script('test', plugins_url('test.js', __FILE__), true);
+		}
+	}
+
 
 	function get_post_types() {
 		$post_types = get_post_types( array( 'public' => true ) );
@@ -70,31 +103,45 @@ class Steem_Post_Changes {
     function post_saved($post_id, $post, $update)
     {
 		error_log("post_saved ". $post_id);
-		$updated = ($update) ? "updated" : "saved";
-		error_log("Post : " . $post->post_title . " was " . $updated);
+		#error_log("post_saved ". $post);
+    		Steem_Post_Changes::$current_post = $post;
+ 		$this->test_post_id = $post_id;
+    	}
 
-		$the_author = get_the_author_meta( 'display_name', get_current_user_id() ); // The revision
-		$the_title = get_the_title( $this->post->ID ); // New title (may be same as old title)
-		$the_date = gmdate( 'j F, Y \a\t G:i \U\T\C', strtotime( $this->post->post_modified_gmt . '+0000' ) ); // Modified time
-		$the_permalink = esc_url( get_permalink( $this->post->ID ) );
-		$the_edit_link = esc_url( get_edit_post_link( $this->post->ID ) );
-		error_log("the_author ". $the_author);
-		error_log("the_title ". $the_title);
-		error_log("the_date ". $the_date);
-		error_log("the_permalink ". $the_permalink);
-		error_log("the_edit_link ". $the_edit_link);
-		$content = $post->post_content;
-		$content = apply_filters('the_content', $content);
-		$content = str_replace(']]>', ']]&gt;', $content);
-		error_log("content ". $content);
-		$options = $this->get_options();
-		error_log("ID ". $options['emails'][0]);
-		error_log("Token ". $options['emails'][1]);
-	}
+		// error_log("post_saved ". $post_id);
+		// $updated = ($update) ? "updated" : "saved";
+		// error_log("Post : " . $post->post_title . " was " . $updated);
+		// error_log("Post type: " . $post->post_type);
+		// $the_author = get_the_author_meta( 'display_name', get_current_user_id() ); // The revision
+		// $the_title = get_the_title( $this->post->ID ); // New title (may be same as old title)
+		// $the_date = gmdate( 'j F, Y \a\t G:i \U\T\C', strtotime( $this->post->post_modified_gmt . '+0000' ) ); // Modified time
+		// $the_permalink = esc_url( get_permalink( $this->post->ID ) );
+		// $the_edit_link = esc_url( get_edit_post_link( $this->post->ID ) );
+		// error_log("the_author ". $the_author);
+		// error_log("the_title ". $the_title);
+		// error_log("the_date ". $the_date);
+		// error_log("the_permalink ". $the_permalink);
+		// error_log("the_edit_link ". $the_edit_link);
+		// $content = $post->post_content;
+		// $content = apply_filters('the_content', $content);
+		// $content = str_replace(']]>', ']]&gt;', $content);
+		// error_log("content ". $content);
+		// $options = $this->get_options();
+		// error_log("ID ". $options['emails'][0]);
+		// error_log("Token ". $options['emails'][1]);
+
+  //   		if ( 'post' === $post->post_type )
+  //   		{
+  //   			Steem_Post_Changes::$isPost = 1;
+ 	// 		error_log("isPost ". Steem_Post_Changes::$isPost);
+  //   		}
+		
+	
 
 	// The meat of the plugin
 	function post_updated( $post_id, $post_after, $post_before ) {
 		error_log("post_updated ". $post_id);
+		$this->test_post_id = $post_id;
 	}
 
 
