@@ -1,12 +1,12 @@
 <?php
 
 
-class Steem_Post_Changes {
+class Steem_Post_Updates {
 	var $defaults;
 
-	const ADMIN_PAGE = 'steem_post_changes';
-	const OPTION_GROUP = 'steem_post_changes';
-	const OPTION = 'steem_post_changes';
+	const ADMIN_PAGE = 'steem_post_updates';
+	const OPTION_GROUP = 'steem_post_updates';
+	const OPTION = 'steem_post_updates';
 
 	static function init() {
 		static $instance = null;
@@ -20,7 +20,7 @@ class Steem_Post_Changes {
 	}
 
 	function __construct() {
-		$this->defaults = apply_filters( 'steem_post_changes_default_options', array(
+		$this->defaults = apply_filters( 'steem_post_updates_default_options', array(
 			'enable'     => 1,
 			'users'      => array(),
 			'userinfo'     => array( get_option( 'admin_email' ) ),
@@ -89,7 +89,7 @@ class Steem_Post_Changes {
 		if ( $just_defaults )
 			return $this->defaults;
 
-		$options = (array) get_option( 'steem_post_changes' );
+		$options = (array) get_option( 'steem_post_updates' );
 
 		return wp_parse_args( $options, $this->defaults );
 	}
@@ -160,7 +160,7 @@ class Steem_Post_Changes {
 		} else {
 			$_userinfo = is_string( $options['userinfo'] ) ? preg_split( '(\n|\r)', $options['userinfo'], -1, PREG_SPLIT_NO_EMPTY ) : array();
 			$_userinfo = array_unique( $_userinfo );
-			array_walk( $_userinfo, array( 'Steem_Post_Changes', 'trim_email' ) );
+			array_walk( $_userinfo, array( 'Steem_Post_Updates', 'trim_email' ) );
 			$userinfo = array_filter( $_userinfo, 'is_email' );
 
 			$invalid_userinfo = array_diff( $_userinfo, $userinfo );
@@ -195,7 +195,7 @@ class Steem_Post_Changes {
 
 		$return['drafts'] = ( empty( $options['drafts'] ) ) ? 0 : 1;
 
-		do_action( 'steem_post_changes_validate_options', $this->get_options(), $return );
+		do_action( 'steem_post_updates_validate_options', $this->get_options(), $return );
 
 		return $return;
 	}
@@ -251,7 +251,7 @@ class Steem_Post_Changes {
 	function enable_setting() {
 		$options = $this->get_options();
 ?>
-		<p><label><input type="checkbox" name="steem_post_changes[enable]" value="1"<?php checked( $options['enable'], 1 ); ?> /> <?php _e( 'send post to steemit when a post updates.' ); ?></label></p>
+		<p><label><input type="checkbox" name="steem_post_updates[enable]" value="1"<?php checked( $options['enable'], 1 ); ?> /> <?php _e( 'send post to steemit when a post updates.' ); ?></label></p>
 <?php
 	}
 
@@ -264,7 +264,7 @@ class Steem_Post_Changes {
 		usort( $users, array( $this, 'sort_users_by_display_name' ) );
 
 		foreach ( $users as $user ) : ?>
-				<li><label><input type="checkbox" name="steem_post_changes[users][]" value="<?php echo (int) $user->ID; ?>"<?php checked( in_array( $user->ID, $options['users'] ) ); ?> /> <?php echo esc_html( $user->display_name ); ?> ( <?php echo esc_html( $user->user_login ); ?> - <?php echo esc_html( $user->user_email ); ?> )</label></li>
+				<li><label><input type="checkbox" name="steem_post_updates[users][]" value="<?php echo (int) $user->ID; ?>"<?php checked( in_array( $user->ID, $options['users'] ) ); ?> /> <?php echo esc_html( $user->display_name ); ?> ( <?php echo esc_html( $user->user_login ); ?> - <?php echo esc_html( $user->user_email ); ?> )</label></li>
 
 <?php		endforeach; ?>
 			</ul>
@@ -279,7 +279,7 @@ class Steem_Post_Changes {
 	function userinfo_setting() {
 		$options = $this->get_options();
 ?>
-		<textarea class="epc-additional-userinfo" rows="4" cols="40" name="steem_post_changes[userinfo]"><?php echo esc_html( join( "\n", $options['userinfo'] ) ); ?></textarea>
+		<textarea class="epc-additional-userinfo" rows="4" cols="40" name="steem_post_updates[userinfo]"><?php echo esc_html( join( "\n", $options['userinfo'] ) ); ?></textarea>
 		<p class="description"><?php _e( 'ex) ID, Posting Key, Tags' ); ?></p>
 <?php
 	}
@@ -291,7 +291,7 @@ class Steem_Post_Changes {
 <?php		foreach ( $this->get_post_types() as $post_type ) :
 			$label = $this->get_post_type_label( $post_type );
 ?>
-			<li><label><input type="checkbox" name="steem_post_changes[post_types][]" value="<?php echo esc_attr( $post_type ); ?>"<?php checked( in_array( $post_type, $options['post_types'] ) ); ?> /> <?php echo esc_html( $label ); ?></label></li>
+			<li><label><input type="checkbox" name="steem_post_updates[post_types][]" value="<?php echo esc_attr( $post_type ); ?>"<?php checked( in_array( $post_type, $options['post_types'] ) ); ?> /> <?php echo esc_html( $label ); ?></label></li>
 <?php		endforeach; ?>
 		</ul>
 <?php
@@ -300,7 +300,7 @@ class Steem_Post_Changes {
 	function drafts_setting() {
 		$options = $this->get_options();
 ?>
-		<p><label><input type="checkbox" name="steem_post_changes[drafts]" value="1"<?php checked( $options['drafts'], 1 ); ?> /> <?php _e( 'drafts is not just published.' ); ?></label></p>
+		<p><label><input type="checkbox" name="steem_post_updates[drafts]" value="1"<?php checked( $options['drafts'], 1 ); ?> /> <?php _e( 'drafts is not just published.' ); ?></label></p>
 <?php
 	}
 }
