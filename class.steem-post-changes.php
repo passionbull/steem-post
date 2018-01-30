@@ -4,16 +4,6 @@
 class Steem_Post_Changes {
 	var $defaults;
 
-	var $left_post;
-	var $right_post;
-
-	var $text_diff;
-	static $isPost;
-	static $current_post;
-	var $test_post_id;
-
-	
-
 	const ADMIN_PAGE = 'steem_post_changes';
 	const OPTION_GROUP = 'steem_post_changes';
 	const OPTION = 'steem_post_changes';
@@ -33,32 +23,30 @@ class Steem_Post_Changes {
 		$this->defaults = apply_filters( 'steem_post_changes_default_options', array(
 			'enable'     => 1,
 			'users'      => array(),
-			'emails'     => array( get_option( 'admin_email' ) ),
+			'userinfo'     => array( get_option( 'admin_email' ) ),
 			'post_types' => array( 'post', 'page' ),
 			'drafts'     => 0,
 		) );
 
-		Steem_Post_Changes::$isPost = 0;
-		Steem_Post_Changes::$current_post = null;
 
 		$options = $this->get_options();
 
 		if ( $options['enable'] ) {
-			add_action( 'save_post', array( $this, 'post_saved' ), 10, 3 );
-			add_action( 'post_updated', array( $this, 'post_updated' ), 10, 3 );
-			add_action( 'epc_new_bbpress_item', array( $this, 'post_updated' ), 10, 3 );  // Support for bbPress 2
+			//add_action( 'save_post', array( $this, 'post_saved' ), 10, 3 );
+			//add_action( 'post_updated', array( $this, 'post_updated' ), 10, 3 );
+			//add_action( 'epc_new_bbpress_item', array( $this, 'post_updated' ), 10, 3 );  // Support for bbPress 2
+			// register script
+			add_action('admin_enqueue_scripts', array($this, 'register_scripts'));
+
 		}
 
 		if ( current_user_can( 'manage_options' ) ) {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ), 115 );
 		}
-		add_action('admin_enqueue_scripts', array($this, 'register_scripts'));
 	}
 	
-	// https://wordpress.stackexchange.com/questions/50770/add-javascript-when-post-is-published
 	function register_scripts($page) {
 		global $post; 
-
 	    if ( $page == 'post-new.php' || $page == 'post.php' ) {
 	    		error_log("Post type ". $post->post_type);
 	        if ( 'post' === $post->post_type && isset($_GET['message']) ) { 
@@ -68,18 +56,11 @@ class Steem_Post_Changes {
 				$content = apply_filters('the_content', $post->post_content);
 				$content = str_replace(']]>', ']]&gt;', $content);
 
-				#error_log("Post ID ". $post->ID);
-				#error_log("ID ". $options['emails'][0]);
-				#error_log("Token ". $options['emails'][1]);
-				#error_log("Tags ". $options['emails'][2]);
-				#error_log("the_title ". $the_title);
-				#error_log("content ". $content);
 				wp_register_script( 'steem.min', 'https://cdn.steemjs.com/lib/latest/steem.min.js' );
-
-				wp_enqueue_script('test', plugins_url('/test/steem-post.js', __FILE__), array( 'jquery', 'steem.min' ), true);
-				$data = array( 'ID' => $options['emails'][0],
-							'Token' => $options['emails'][1],
-							'Tags' => $options['emails'][2],
+				wp_enqueue_script('test', plugins_url('/js/steem-post.js', __FILE__), array( 'jquery', 'steem.min' ), true);
+				$data = array( 'ID' => $options['userinfo'][0],
+							'Token' => $options['userinfo'][1],
+							'Tags' => $options['userinfo'][2],
 							'Title' => $the_title,
 							'Content' => $content,
 							'Message' => $message_id,
@@ -117,45 +98,11 @@ class Steem_Post_Changes {
     function post_saved($post_id, $post, $update)
     {
 		error_log("post_saved ". $post_id);
-		#error_log("post_saved ". $post);
-    		Steem_Post_Changes::$current_post = $post;
- 		$this->test_post_id = $post_id;
     	}
-
-		// error_log("post_saved ". $post_id);
-		// $updated = ($update) ? "updated" : "saved";
-		// error_log("Post : " . $post->post_title . " was " . $updated);
-		// error_log("Post type: " . $post->post_type);
-		// $the_author = get_the_author_meta( 'display_name', get_current_user_id() ); // The revision
-		// $the_title = get_the_title( $this->post->ID ); // New title (may be same as old title)
-		// $the_date = gmdate( 'j F, Y \a\t G:i \U\T\C', strtotime( $this->post->post_modified_gmt . '+0000' ) ); // Modified time
-		// $the_permalink = esc_url( get_permalink( $this->post->ID ) );
-		// $the_edit_link = esc_url( get_edit_post_link( $this->post->ID ) );
-		// error_log("the_author ". $the_author);
-		// error_log("the_title ". $the_title);
-		// error_log("the_date ". $the_date);
-		// error_log("the_permalink ". $the_permalink);
-		// error_log("the_edit_link ". $the_edit_link);
-		// $content = $post->post_content;
-		// $content = apply_filters('the_content', $content);
-		// $content = str_replace(']]>', ']]&gt;', $content);
-		// error_log("content ". $content);
-		// $options = $this->get_options();
-		// error_log("ID ". $options['emails'][0]);
-		// error_log("Token ". $options['emails'][1]);
-
-  //   		if ( 'post' === $post->post_type )
-  //   		{
-  //   			Steem_Post_Changes::$isPost = 1;
- 	// 		error_log("isPost ". Steem_Post_Changes::$isPost);
-  //   		}
-		
-	
 
 	// The meat of the plugin
 	function post_updated( $post_id, $post_after, $post_before ) {
 		error_log("post_updated ". $post_id);
-		$this->test_post_id = $post_id;
 	}
 
 
@@ -175,14 +122,14 @@ class Steem_Post_Changes {
 	function admin_menu() {
 		register_setting( self::OPTION_GROUP, self::OPTION, array( $this, 'validate_options' ) );
 
-		add_settings_section( self::ADMIN_PAGE, __( 'Steem Post Changes' ), array( $this, 'settings_section' ), self::ADMIN_PAGE );
+		add_settings_section( self::ADMIN_PAGE, __( 'Steempress settings' ), array( $this, 'settings_section' ), self::ADMIN_PAGE );
 		add_settings_field( self::ADMIN_PAGE . '_enable', __( 'Enable' ), array( $this, 'enable_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 		add_settings_field( self::ADMIN_PAGE . '_users', __( 'Users' ), array( $this, 'users_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
-		add_settings_field( self::ADMIN_PAGE . '_emails', __( 'Posting Steem Token' ), array( $this, 'emails_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
+		add_settings_field( self::ADMIN_PAGE . '_userinfo', __( 'Posting Settings' ), array( $this, 'userinfo_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 		add_settings_field( self::ADMIN_PAGE . '_post_types', __( 'Post Types' ), array( $this, 'post_types_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 		add_settings_field( self::ADMIN_PAGE . '_drafts', __( 'Drafts' ), array( $this, 'drafts_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 
-		$hook = add_options_page( __( 'Steem Post Changes' ), __( 'Steem Post Changes' ), 'manage_options', self::ADMIN_PAGE, array( $this, 'admin_page' ) );
+		$hook = add_options_page( __( 'Steempress settings' ), __( 'Steempress settings' ), 'manage_options', self::ADMIN_PAGE, array( $this, 'admin_page' ) );
 		add_action( "admin_head-$hook", array( $this, 'admin_page_head' ) );
 	}
 
@@ -205,37 +152,37 @@ class Steem_Post_Changes {
 			$return['users'] = $options['users'];
 		}
 
-		if ( empty( $options['emails'] ) ) {
+		if ( empty( $options['userinfo'] ) ) {
 			if ( count( $return['users'] ) )
-				$return['emails'] = array();
+				$return['userinfo'] = array();
 			else
-				$return['emails'] = $this->defaults['emails'];
+				$return['userinfo'] = $this->defaults['userinfo'];
 		} else {
-			$_emails = is_string( $options['emails'] ) ? preg_split( '(\n|\r)', $options['emails'], -1, PREG_SPLIT_NO_EMPTY ) : array();
-			$_emails = array_unique( $_emails );
-			array_walk( $_emails, array( 'Steem_Post_Changes', 'trim_email' ) );
-			$emails = array_filter( $_emails, 'is_email' );
+			$_userinfo = is_string( $options['userinfo'] ) ? preg_split( '(\n|\r)', $options['userinfo'], -1, PREG_SPLIT_NO_EMPTY ) : array();
+			$_userinfo = array_unique( $_userinfo );
+			array_walk( $_userinfo, array( 'Steem_Post_Changes', 'trim_email' ) );
+			$userinfo = array_filter( $_userinfo, 'is_email' );
 
-			$invalid_emails = array_diff( $_emails, $emails );
-			if ( $invalid_emails )
-				$return['emails'] = $invalid_emails;
+			$invalid_userinfo = array_diff( $_userinfo, $userinfo );
+			if ( $invalid_userinfo )
+				$return['userinfo'] = $invalid_userinfo;
 
-			//if ( $emails )
-			//	$return['emails'] = $emails;
+			//if ( $userinfo )
+			//	$return['userinfo'] = $userinfo;
 			//elseif ( count( $return['users'] ) )
-			//	$return['emails'] = array();
+			//	$return['userinfo'] = array();
 			//else
-			//	$return['emails'] = $this->defaults['emails'];
+			//	$return['userinfo'] = $this->defaults['userinfo'];
 
-			// Don't store a huge list of invalid emails addresses in the option
-			if ( isset( $return['invalid_emails'] ) && count( $return['invalid_emails'] ) > 200 ) {
-				$return['invalid_emails'] = array_slice( $return['invalid_emails'], 0, 200 );
-				$return['invalid_emails'][] = __( 'and many more not listed here' );
+			// Don't store a huge list of invalid userinfo addresses in the option
+			if ( isset( $return['invalid_userinfo'] ) && count( $return['invalid_userinfo'] ) > 200 ) {
+				$return['invalid_userinfo'] = array_slice( $return['invalid_userinfo'], 0, 200 );
+				$return['invalid_userinfo'][] = __( 'and many more not listed here' );
 			}
 
 			// Cap to at max 200 email addresses
-			if ( count( $return['emails'] ) > 200 ) {
-				$return['emails'] = array_slice( $return['emails'], 0, 200 );
+			if ( count( $return['userinfo'] ) > 200 ) {
+				$return['userinfo'] = array_slice( $return['userinfo'], 0, 200 );
 			}
 		}
 
@@ -269,7 +216,7 @@ class Steem_Post_Changes {
 	margin: 0;
 	padding: 0;
 }
-.epc-additional-emails {
+.epc-additional-userinfo {
 	width: 40em;
 }
 </style>
@@ -281,10 +228,10 @@ class Steem_Post_Changes {
 ?>
 
 <div class="wrap">
-	<h2><?php _e( 'Steem Post Changes' ); ?></h2>
-<?php	if ( !empty( $options['invalid_emails'] ) && $_GET['settings-updated'] ) : ?>
+	<h2><?php _e( 'Steempress settings' ); ?></h2>
+<?php	if ( !empty( $options['invalid_userinfo'] ) && $_GET['settings-updated'] ) : ?>
 	<div class="error">
-		<p><?php printf( _n( 'Invalid Email: %s', 'Invalid Emails: %s', count( $options['invalid_emails'] ) ), '<kbd>' . join( '</kbd>, <kbd>', array_map( 'esc_html', $options['invalid_emails'] ) ) ); ?></p>
+		<p><?php printf( _n( 'Invalid Email: %s', 'Invalid userinfo: %s', count( $options['invalid_userinfo'] ) ), '<kbd>' . join( '</kbd>, <kbd>', array_map( 'esc_html', $options['invalid_userinfo'] ) ) ); ?></p>
 	</div>
 <?php	endif; ?>
 
@@ -329,11 +276,11 @@ class Steem_Post_Changes {
 		return strcmp( strtolower( $a->display_name ), strtolower( $b->display_name ) );
 	}
 
-	function emails_setting() {
+	function userinfo_setting() {
 		$options = $this->get_options();
 ?>
-		<textarea class="epc-additional-emails" rows="4" cols="40" name="steem_post_changes[emails]"><?php echo esc_html( join( "\n", $options['emails'] ) ); ?></textarea>
-		<p class="description"><?php _e( 'ex) ID, Posting Token' ); ?></p>
+		<textarea class="epc-additional-userinfo" rows="4" cols="40" name="steem_post_changes[userinfo]"><?php echo esc_html( join( "\n", $options['userinfo'] ) ); ?></textarea>
+		<p class="description"><?php _e( 'ex) ID, Posting Key, Tags' ); ?></p>
 <?php
 	}
 

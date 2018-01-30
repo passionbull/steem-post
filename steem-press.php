@@ -1,7 +1,7 @@
 <?php
 
 /*
-Plugin Name: Steem Post
+Plugin Name: Steempress
 Description: When you write post on wordpress, this post is updated to steem.
 Plugin URI: 
 Version: 1.0
@@ -10,9 +10,6 @@ Author URI: http://steemit.com/@jacobyu
 */
 
 require_once dirname( __FILE__ ) . '/class.steem-post-changes.php';
-#require_once dirname( __FILE__ ) . '/class.wp-steem.php';
-#require_once dirname( __FILE__ ) . '/class.wp-steem-post.php';
-
 
 function Steem_post_changes_action_links( $links ) {
 	#wp_register_script( $handle, $src, $deps, $ver, $in_footer );
