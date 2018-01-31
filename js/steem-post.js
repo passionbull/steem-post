@@ -48,22 +48,9 @@ jQuery(document).ready(function($) {
 
     }else if( wpsePost.Message == 1 ){
     }
-    
 
-    
     steem.broadcast.sendAsync(
         { operations, extensions: [] },
         { posting: wpsePost.Token }
       );
-    // steem.broadcast.comment(wpsePost.Token, 
-    //    '',
-    //    tag_array[0],// main tag
-    //    wpsePost.ID,
-    //    permlink,
-    //    wpsePost.Title, 
-    //    wpsePost.Content, 
-    //    {tags: tag_array,app: 'test'}, 
-    //    function(err, result) {
-    //       console.log(err, result);
-    //   });    
 });

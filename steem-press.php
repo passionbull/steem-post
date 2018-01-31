@@ -4,7 +4,7 @@
 Plugin Name: SteemPress
 Description: When you write post on wordpress, this post is updated to steemit.
 Plugin URI: 
-Version: 1.0
+Version: 0.1
 Author: Jacob yu
 Author URI: http://steemit.com/@jacobyu
 */
