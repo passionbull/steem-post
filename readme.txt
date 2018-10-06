@@ -1,6 +1,6 @@
-=== SteemPress ===
+=== WarpSteem ===
 Contributors: jacobyu
-Tags: steemit,steem,steempress
+Tags: steemit, steem, steempress, warpsteem
 Requires at least: 4.8.4
 Tested up to: 4.9.2
 Requires PHP: 5.6.10
@@ -14,11 +14,11 @@ Currently, main functions are implemented.
 writend Post is updated from wordpress to steemit.
 I need to develop setting pages and side bar for posting options.
 
-SteemPress don`t save your information.
+Warpsteem don`t save your information.
 
 == Installation ==
-1. setting steempress
-Setting -> Steempress setting -> Posting settings
+1. setting warpsteem
+Setting -> Warpsteem setting -> Posting settings
 Write your ID, Posting key, Tags
 
 example)
