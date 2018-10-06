@@ -1,13 +1,13 @@
 === WarpSteem ===
 Contributors: jacobyu
-Tags: steemit, steem, steempress, warpsteem
+Tags: steemit, steem, steempress, warpsteem, busy
 Requires at least: 4.8.4
 Tested up to: 4.9.2
 Requires PHP: 5.6.10
 Stable tag: 0.1
 License: MIT
 
-When you write post on wordpress, this post is updated to steemit.
+When you write a post on wordpress, the post is updated to steemit.
 
 == Description ==
 Currently, main functions are implemented.
