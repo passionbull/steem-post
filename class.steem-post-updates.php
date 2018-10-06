@@ -122,14 +122,14 @@ class Steem_Post_Updates {
 	function admin_menu() {
 		register_setting( self::OPTION_GROUP, self::OPTION, array( $this, 'validate_options' ) );
 
-		add_settings_section( self::ADMIN_PAGE, __( 'Steempress settings' ), array( $this, 'settings_section' ), self::ADMIN_PAGE );
+		add_settings_section( self::ADMIN_PAGE, __( 'WarpSteem settings' ), array( $this, 'settings_section' ), self::ADMIN_PAGE );
 		add_settings_field( self::ADMIN_PAGE . '_enable', __( 'Enable' ), array( $this, 'enable_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 		add_settings_field( self::ADMIN_PAGE . '_users', __( 'Users' ), array( $this, 'users_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 		add_settings_field( self::ADMIN_PAGE . '_userinfo', __( 'Posting Settings' ), array( $this, 'userinfo_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 		add_settings_field( self::ADMIN_PAGE . '_post_types', __( 'Post Types' ), array( $this, 'post_types_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 		add_settings_field( self::ADMIN_PAGE . '_drafts', __( 'Drafts' ), array( $this, 'drafts_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 
-		$hook = add_options_page( __( 'Steempress settings' ), __( 'Steempress settings' ), 'manage_options', self::ADMIN_PAGE, array( $this, 'admin_page' ) );
+		$hook = add_options_page( __( 'WarpSteem settings' ), __( 'WarpSteem settings' ), 'manage_options', self::ADMIN_PAGE, array( $this, 'admin_page' ) );
 		add_action( "admin_head-$hook", array( $this, 'admin_page_head' ) );
 	}
 
@@ -166,13 +166,6 @@ class Steem_Post_Updates {
 			$invalid_userinfo = array_diff( $_userinfo, $userinfo );
 			if ( $invalid_userinfo )
 				$return['userinfo'] = $invalid_userinfo;
-
-			//if ( $userinfo )
-			//	$return['userinfo'] = $userinfo;
-			//elseif ( count( $return['users'] ) )
-			//	$return['userinfo'] = array();
-			//else
-			//	$return['userinfo'] = $this->defaults['userinfo'];
 
 			// Don't store a huge list of invalid userinfo addresses in the option
 			if ( isset( $return['invalid_userinfo'] ) && count( $return['invalid_userinfo'] ) > 200 ) {
@@ -228,7 +221,7 @@ class Steem_Post_Updates {
 ?>
 
 <div class="wrap">
-	<h2><?php _e( 'Steempress settings' ); ?></h2>
+	<h2><?php _e( 'WarpSteem settings' ); ?></h2>
 <?php	if ( !empty( $options['invalid_userinfo'] ) && $_GET['settings-updated'] ) : ?>
 	<div class="error">
 		<p><?php printf( _n( 'Invalid Email: %s', 'Invalid userinfo: %s', count( $options['invalid_userinfo'] ) ), '<kbd>' . join( '</kbd>, <kbd>', array_map( 'esc_html', $options['invalid_userinfo'] ) ) ); ?></p>

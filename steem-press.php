@@ -1,12 +1,12 @@
 <?php
 
 /*
-Plugin Name: SteemPress
+Plugin Name: WarpSteem
 Description: When you write post on wordpress, this post is updated to steemit.
 Plugin URI: 
 Version: 0.1
 Author: Jacob yu
-Author URI: http://steemit.com/@jacobyu
+Author URI: http://busy.org/@jacobyu
 */
 
 require_once dirname( __FILE__ ) . '/class.steem-post-updates.php';
