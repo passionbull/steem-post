@@ -1,25 +1,35 @@
 === WarpSteem ===
-Contributors: jacobyu
-Tags: steemit, steem, steempress, warpsteem, busy
+Plugin Name: WarpSteem
+Author: passionbull
+Author URI: https://steemit.com/@passionbull
+Tags: steemit, steem, warpsteem
 Requires at least: 4.8.4
 Tested up to: 4.9.2
-Requires PHP: 5.6.10
-Stable tag: 0.1
-License: MIT
+Stable tag: 1.0
+License: GPLv2
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 When you write a post on wordpress, the post is updated to steemit.
 
 == Description ==
-Currently, main functions are implemented.
-writend Post is updated from wordpress to steemit.
-I need to develop setting pages and side bar for posting options.
 
-Warpsteem don`t save your information.
+WarpSteem is a wordpress plugin that connect wordpress to steemit.
+
+Steemit is a blog platform that is based on blockchain.
+
+You can easily write something on steemit (blockchain blog) using this plugin.
+
+For using this, you need to have steemit acount.
 
 == Installation ==
+
+For using this plugin, you need to have steemit account.
+You can get an account at https://signup.steemit.com/.
+Then you go to setting page and fill your information (user id, posting key, tag).
+
 1. setting warpsteem
 Setting -> Warpsteem setting -> Posting settings
-Write your ID, Posting key, Tags
+You need to write your ID, posting key, tags.
 
 example)
 passionbull
@@ -35,9 +45,9 @@ test,wordpress
 2. post page
 
 == Changelog ==
-v0.1
-- Publish your newly created WordPress post to steemit
-- Publish your old WordPress post to steemit
+v1.0
+- Publish your newly created post on wordpress to steemit
+- Publish your old post on wordpress to steemit
 - Update your steem-post if you have used this plugin to publish that post
 
 
