@@ -25,10 +25,6 @@ You can get an account at https://signup.steemit.com/.
 If you have question, you can contact me anytime using wordpress or steemit.
 
 == Installation ==
-For using this plugin, you need to have steemit account.
-
-You can get an account at https://signup.steemit.com/.
-
 You go to setting page and fill your information (user id, steemit posting key, tag).
 
 The installation procedure is as follows.
