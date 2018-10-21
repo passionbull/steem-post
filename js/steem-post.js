@@ -1,7 +1,3 @@
-var chkKrtext = function(text) {
-    var pattern = /[\u3131-\u314e|\u314f-\u3163|\uac00-\ud7a3]/g;
-    return (pattern.test(input_s)) ? true : false;
-}
 
 jQuery(document).ready(function($) {  
 
@@ -16,19 +12,14 @@ jQuery(document).ready(function($) {
     //var permlink = new Date().toISOString().replace(/[^a-zA-Z0-9]+/g, '').toLowerCase();
     
     var permlink_end = wpsePost.Slug;
-
     var pattern = /[\u3131-\u314e|\u314f-\u3163|\uac00-\ud7a3]/g;
-    var isKR = (pattern.test(wpsePost.Slug)) ? true : false;
-
-    if(isKR){
-        permlink_end = 'warp-'.tag_array[0];
-    }
+    var isKR = (pattern.test(decodeURIComponent(wpsePost.Slug))) ? true : false;
+    // if(isKR){
+    //     permlink_end = 'warp-'.tag_array[0];
+    // }
     var permlink = wpsePost.Post_ID+'-'+permlink_end;
 
     permlink = permlink.toLowerCase();
-
-    alert(permlink);
-    alert(wpsePost.Tags);
 
 
     var operations = [['comment', {
@@ -67,8 +58,8 @@ jQuery(document).ready(function($) {
     }else if( wpsePost.Message == 1 ){
     }
 
-    // steem.broadcast.sendAsync(
-    //     { operations, extensions: [] },
-    //     { posting: wpsePost.Token }
-    //   );
+    steem.broadcast.sendAsync(
+        { operations, extensions: [] },
+        { posting: wpsePost.Token }
+      );
 });

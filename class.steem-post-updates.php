@@ -198,6 +198,60 @@ class Steem_Post_Updates {
 			}
 		}
 
+		if ( empty( $options['userinfo_posting_key'] ) ) {
+			if ( count( $return['users'] ) )
+				$return['userinfo_posting_key'] = array();
+			else
+				$return['userinfo_posting_key'] = $this->defaults['userinfo_posting_key'];
+		} else {
+			$_userinfo = is_string( $options['userinfo_posting_key'] ) ? preg_split( '(\n|\r)', $options['userinfo_posting_key'], -1, PREG_SPLIT_NO_EMPTY ) : array();
+			$_userinfo = array_unique( $_userinfo );
+			array_walk( $_userinfo, array( 'Steem_Post_Updates', 'trim_email' ) );
+			$userinfo = array_filter( $_userinfo, 'is_email' );
+
+			$invalid_userinfo = array_diff( $_userinfo, $userinfo );
+			if ( $invalid_userinfo )
+				$return['userinfo_posting_key'] = $invalid_userinfo;
+
+			// Don't store a huge list of invalid userinfo addresses in the option
+			if ( isset( $return['invalid_userinfo'] ) && count( $return['invalid_userinfo'] ) > 200 ) {
+				$return['invalid_userinfo'] = array_slice( $return['invalid_userinfo'], 0, 200 );
+				$return['invalid_userinfo'][] = __( 'and many more not listed here' );
+			}
+
+			// Cap to at max 200 email addresses
+			if ( count( $return['userinfo_posting_key'] ) > 200 ) {
+				$return['userinfo_posting_key'] = array_slice( $return['userinfo_posting_key'], 0, 200 );
+			}
+		}
+
+		if ( empty( $options['userinfo_tags'] ) ) {
+			if ( count( $return['users'] ) )
+				$return['userinfo_tags'] = array();
+			else
+				$return['userinfo_tags'] = $this->defaults['userinfo_tags'];
+		} else {
+			$_userinfo = is_string( $options['userinfo_tags'] ) ? preg_split( '(\n|\r)', $options['userinfo_tags'], -1, PREG_SPLIT_NO_EMPTY ) : array();
+			$_userinfo = array_unique( $_userinfo );
+			array_walk( $_userinfo, array( 'Steem_Post_Updates', 'trim_email' ) );
+			$userinfo = array_filter( $_userinfo, 'is_email' );
+
+			$invalid_userinfo = array_diff( $_userinfo, $userinfo );
+			if ( $invalid_userinfo )
+				$return['userinfo_tags'] = $invalid_userinfo;
+
+			// Don't store a huge list of invalid userinfo addresses in the option
+			if ( isset( $return['invalid_userinfo'] ) && count( $return['invalid_userinfo'] ) > 200 ) {
+				$return['invalid_userinfo'] = array_slice( $return['invalid_userinfo'], 0, 200 );
+				$return['invalid_userinfo'][] = __( 'and many more not listed here' );
+			}
+
+			// Cap to at max 200 email addresses
+			if ( count( $return['userinfo_tags'] ) > 200 ) {
+				$return['userinfo_tags'] = array_slice( $return['userinfo_tags'], 0, 200 );
+			}
+		}		
+
 		if ( empty( $options['post_types'] ) || !is_array( $options ) ) {
 			$return['post_types'] = $this->defaults['post_types'];
 		} else {
