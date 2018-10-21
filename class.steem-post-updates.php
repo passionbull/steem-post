@@ -56,21 +56,30 @@ class Steem_Post_Updates {
 				$content = apply_filters('the_content', $post->post_content);
 				$content = str_replace(']]>', ']]&gt;', $content);
 
-				error_log("post slug ". $post->post_name);
-				error_log("post tags ". the_tags());
-				
-				// wp_register_script( 'steem.min', 'https://cdn.steemjs.com/lib/latest/steem.min.js' );
-				// wp_enqueue_script('test', plugins_url('/js/steem-post.js', __FILE__), array( 'jquery', 'steem.min' ), true);
-				// $data = array( 'ID' => $options['userinfo'][0],
-				// 			'Token' => $options['userinfo'][1],
-				// 			'Tags' => $options['userinfo'][2],
-				// 			'Title' => $the_title,
-				// 			'Content' => $content,
-				// 			'Message' => $message_id,
-				// 			'Post_ID' => $post->ID,
-				// 			'Slug' => $post->post_name
-				// );
-				// wp_localize_script( 'test', 'wpsePost', $data );
+				$post_tags = get_the_tags($post->ID);
+				if ( $post_tags ) {
+					foreach( $post_tags as $tag ) {
+					// error_log($tag->name . ', ') ; 
+					$options['userinfo'][2] = $tag->name.','.$options['userinfo'][2];
+					}
+				}
+
+				// check whether post_name is korean or not
+				// error_log("post slug ". $post->post_name);
+				// error_log("post tags ".$options['userinfo'][2]);
+
+				wp_register_script( 'steem.min', 'https://cdn.steemjs.com/lib/latest/steem.min.js' );
+				wp_enqueue_script('test', plugins_url('/js/steem-post.js', __FILE__), array( 'jquery', 'steem.min' ), true);
+				$data = array( 'ID' => $options['userinfo'][0],
+							'Token' => $options['userinfo'][1],
+							'Tags' => $options['userinfo'][2],
+							'Title' => $the_title,
+							'Content' => $content,
+							'Message' => $message_id,
+							'Post_ID' => $post->ID,
+							'Slug' => $post->post_name
+				);
+				wp_localize_script( 'test', 'wpsePost', $data );
 	        }
 	    }
 	}
@@ -127,7 +136,7 @@ class Steem_Post_Updates {
 
 		add_settings_section( self::ADMIN_PAGE, __( 'WarpSteem settings' ), array( $this, 'settings_section' ), self::ADMIN_PAGE );
 		add_settings_field( self::ADMIN_PAGE . '_enable', __( 'Enable' ), array( $this, 'enable_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
-		add_settings_field( self::ADMIN_PAGE . '_users', __( 'Users' ), array( $this, 'users_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
+		// add_settings_field( self::ADMIN_PAGE . '_users', __( 'Users' ), array( $this, 'users_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 		add_settings_field( self::ADMIN_PAGE . '_userinfo', __( 'Posting Settings' ), array( $this, 'userinfo_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 		add_settings_field( self::ADMIN_PAGE . '_post_types', __( 'Post Types' ), array( $this, 'post_types_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 		add_settings_field( self::ADMIN_PAGE . '_drafts', __( 'Drafts' ), array( $this, 'drafts_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
@@ -251,22 +260,6 @@ class Steem_Post_Updates {
 <?php
 	}
 
-	function users_setting() {
-		$options = $this->get_options();
-?>
-		<div class="epc-registered-user-selection">
-			<ul>
-<?php		$users = get_users();
-		usort( $users, array( $this, 'sort_users_by_display_name' ) );
-
-		foreach ( $users as $user ) : ?>
-				<li><label><input type="checkbox" name="steem_post_updates[users][]" value="<?php echo (int) $user->ID; ?>"<?php checked( in_array( $user->ID, $options['users'] ) ); ?> /> <?php echo esc_html( $user->display_name ); ?> ( <?php echo esc_html( $user->user_login ); ?> - <?php echo esc_html( $user->user_email ); ?> )</label></li>
-
-<?php		endforeach; ?>
-			</ul>
-		</div>
-<?php
-	}
 
 	function sort_users_by_display_name( $a, $b ) {
 		return strcmp( strtolower( $a->display_name ), strtolower( $b->display_name ) );

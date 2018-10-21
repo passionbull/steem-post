@@ -1,3 +1,8 @@
+var chkKrtext = function(text) {
+    var pattern = /[\u3131-\u314e|\u314f-\u3163|\uac00-\ud7a3]/g;
+    return (pattern.test(input_s)) ? true : false;
+}
+
 jQuery(document).ready(function($) {  
 
     if( wpsePost.Message == 6 ){
@@ -9,7 +14,14 @@ jQuery(document).ready(function($) {
     var tag_array = wpsePost.Tags.split(',');
     steem.api.setOptions({ url: 'https://api.steemit.com'});
     //var permlink = new Date().toISOString().replace(/[^a-zA-Z0-9]+/g, '').toLowerCase();
-    var permlink = wpsePost.Post_ID+'-warp-'+tag_array[0];
+    // if(wpsePost.Slug)
+    
+    var permlink_end = wpsePost.Slug;
+    if(chkKrtext(wpsePost.Slug)){
+        permlink_end = 'warp-'.tag_array[0];
+    }
+    var permlink = wpsePost.Post_ID+'-'+permlink_end;
+
     permlink = permlink.toLowerCase();
 
 
@@ -21,7 +33,7 @@ jQuery(document).ready(function($) {
             'title': wpsePost.Title, 
             'body': wpsePost.Content, 
             'json_metadata': JSON.stringify({ 
-                     tags: tag_array, 
+                     tags: tag_array.slice(0,5), 
                      app: 'Steem.js' 
                    })
         }]];
