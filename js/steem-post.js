@@ -9,7 +9,7 @@ jQuery(document).ready(function($) {
     var tag_array = wpsePost.Tags.split(',');
     steem.api.setOptions({ url: 'https://api.steemit.com'});
     //var permlink = new Date().toISOString().replace(/[^a-zA-Z0-9]+/g, '').toLowerCase();
-    var permlink = wpsePost.Post_ID+'-hj-'+tag_array[0];
+    var permlink = wpsePost.Post_ID+'-warp-'+tag_array[0];
     permlink = permlink.toLowerCase();
 
 

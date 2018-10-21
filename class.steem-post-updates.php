@@ -56,18 +56,21 @@ class Steem_Post_Updates {
 				$content = apply_filters('the_content', $post->post_content);
 				$content = str_replace(']]>', ']]&gt;', $content);
 
-				wp_register_script( 'steem.min', 'https://cdn.steemjs.com/lib/latest/steem.min.js' );
-				wp_enqueue_script('test', plugins_url('/js/steem-post.js', __FILE__), array( 'jquery', 'steem.min' ), true);
-				$data = array( 'ID' => $options['userinfo'][0],
-							'Token' => $options['userinfo'][1],
-							'Tags' => $options['userinfo'][2],
-							'Title' => $the_title,
-							'Content' => $content,
-							'Message' => $message_id,
-							'Post_ID' => $post->ID,
-							'Slug' => $post->post_name
-				);
-				wp_localize_script( 'test', 'wpsePost', $data );
+				error_log("post slug ". $post->post_name);
+				error_log("post tags ". the_tags());
+				
+				// wp_register_script( 'steem.min', 'https://cdn.steemjs.com/lib/latest/steem.min.js' );
+				// wp_enqueue_script('test', plugins_url('/js/steem-post.js', __FILE__), array( 'jquery', 'steem.min' ), true);
+				// $data = array( 'ID' => $options['userinfo'][0],
+				// 			'Token' => $options['userinfo'][1],
+				// 			'Tags' => $options['userinfo'][2],
+				// 			'Title' => $the_title,
+				// 			'Content' => $content,
+				// 			'Message' => $message_id,
+				// 			'Post_ID' => $post->ID,
+				// 			'Slug' => $post->post_name
+				// );
+				// wp_localize_script( 'test', 'wpsePost', $data );
 	        }
 	    }
 	}
