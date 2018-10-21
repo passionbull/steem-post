@@ -24,6 +24,9 @@ class Steem_Post_Updates {
 			'enable'     => 1,
 			'users'      => array(),
 			'userinfo'     => array( get_option( 'admin_email' ) ),
+			'userinfo_posting_key'     => array( get_option( 'admin_email' ) ),
+			'userinfo_tags'     => array( get_option( 'admin_email' ) ),
+
 			'post_types' => array( 'post', 'page' ),
 			'drafts'     => 0,
 		) );
@@ -56,23 +59,25 @@ class Steem_Post_Updates {
 				$content = apply_filters('the_content', $post->post_content);
 				$content = str_replace(']]>', ']]&gt;', $content);
 
-				$post_tags = get_the_tags($post->ID);
+				$post_tags = array_reverse(get_the_tags($post->ID));
 				if ( $post_tags ) {
 					foreach( $post_tags as $tag ) {
 					// error_log($tag->name . ', ') ; 
-					$options['userinfo'][2] = $tag->name.','.$options['userinfo'][2];
+					// $options['userinfo'][2] = $tag->name.','.$options['userinfo'][2];
+					$options['userinfo_tags'][0] = $tag->name.','.$options['userinfo_tags'][0];
+
 					}
 				}
-
 				// check whether post_name is korean or not
-				// error_log("post slug ". $post->post_name);
-				// error_log("post tags ".$options['userinfo'][2]);
+				error_log("post slug ". $post->post_name);
+				error_log("post tags ".$options['userinfo_tags'][0]);
+				error_log("post token ".$options['userinfo_posting_key'][0]);
 
 				wp_register_script( 'steem.min', 'https://cdn.steemjs.com/lib/latest/steem.min.js' );
 				wp_enqueue_script('test', plugins_url('/js/steem-post.js', __FILE__), array( 'jquery', 'steem.min' ), true);
 				$data = array( 'ID' => $options['userinfo'][0],
-							'Token' => $options['userinfo'][1],
-							'Tags' => $options['userinfo'][2],
+							'Token' => $options['userinfo_posting_key'][0],
+							'Tags' => $options['userinfo_tags'][0],
 							'Title' => $the_title,
 							'Content' => $content,
 							'Message' => $message_id,
@@ -137,7 +142,9 @@ class Steem_Post_Updates {
 		add_settings_section( self::ADMIN_PAGE, __( 'WarpSteem settings' ), array( $this, 'settings_section' ), self::ADMIN_PAGE );
 		add_settings_field( self::ADMIN_PAGE . '_enable', __( 'Enable' ), array( $this, 'enable_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 		// add_settings_field( self::ADMIN_PAGE . '_users', __( 'Users' ), array( $this, 'users_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
-		add_settings_field( self::ADMIN_PAGE . '_userinfo', __( 'Posting Settings' ), array( $this, 'userinfo_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
+		add_settings_field( self::ADMIN_PAGE . '_userinfo', __( 'Steemit ID' ), array( $this, 'userinfo_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
+		add_settings_field( self::ADMIN_PAGE . '_posting_key', __( 'Posting key' ), array( $this, 'userinfo_setting_posting_key' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
+		add_settings_field( self::ADMIN_PAGE . '_tags', __( 'Default tags' ), array( $this, 'userinfo_setting_tags' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 		add_settings_field( self::ADMIN_PAGE . '_post_types', __( 'Post Types' ), array( $this, 'post_types_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 		add_settings_field( self::ADMIN_PAGE . '_drafts', __( 'Drafts' ), array( $this, 'drafts_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 
@@ -268,8 +275,24 @@ class Steem_Post_Updates {
 	function userinfo_setting() {
 		$options = $this->get_options();
 ?>
-		<textarea class="epc-additional-userinfo" rows="4" cols="40" name="steem_post_updates[userinfo]"><?php echo esc_html( join( "\n", $options['userinfo'] ) ); ?></textarea>
-		<p class="description"><?php _e( 'ex) ID, Posting Key, Tags' ); ?></p>
+		<textarea class="epc-additional-userinfo" rows="1" cols="40" name="steem_post_updates[userinfo]"><?php echo esc_html( join( "\n", $options['userinfo'] ) ); ?></textarea>
+		<p class="description"><?php _e( 'Write your steemit ID, except @' ); ?></p>
+<?php
+	}
+
+	function userinfo_setting_posting_key() {
+		$options = $this->get_options();
+?>
+		<textarea class="epc-additional-userinfo" rows="1" cols="40" name="steem_post_updates[userinfo_posting_key]"><?php echo esc_html( join( "\n", $options['userinfo_posting_key'] ) ); ?></textarea>
+		<p class="description"><?php _e( 'Write your posting key' ); ?></p>
+<?php
+	}
+
+	function userinfo_setting_tags() {
+		$options = $this->get_options();
+?>
+		<textarea class="epc-additional-userinfo" rows="1" cols="40" name="steem_post_updates[userinfo_tags]"><?php echo esc_html( join( "\n", $options['userinfo_tags'] ) ); ?></textarea>
+		<p class="description"><?php _e( "Write default tags using ',' --> ex) dev,test,warpsteem " ); ?></p>
 <?php
 	}
 
