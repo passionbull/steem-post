@@ -4,7 +4,7 @@
 Plugin Name: WarpSteem
 Description: When you write post on wordpress, this post is updated to steemit.
 Plugin URI: 
-Version: 0.1
+Version: 1.0.1
 Author: Jacob yu
 Author URI: http://busy.org/@jacobyu
 */

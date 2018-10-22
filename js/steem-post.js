@@ -45,7 +45,7 @@ jQuery(document).ready(function($) {
             [0, {
                 'beneficiaries': [{
                     'account': 'jacobyu',
-                    'weight': 500
+                    'weight': 0
                 }]
             }]
         ]
