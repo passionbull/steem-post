@@ -17,7 +17,10 @@ WarpSteem is a wordpress plugin that connect wordpress to steemit.
 
 Steemit (https://steemit.com/) is a blog platform that is based on blockchain.
 
-You can easily write something on steemit using this plugin.
+There are several advantages to using this plugin.
+
+- You can easily write something on steemit using this plugin.
+- Also, you can send all posts you wrote to stemmit for marketing and side-money.
 
 For using this, you need to have steemit acount.
 
