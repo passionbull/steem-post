@@ -35,19 +35,82 @@ class Steem_Post_Updates {
 		$options = $this->get_options();
 
 		if ( $options['enable'] ) {
-			//add_action( 'save_post', array( $this, 'post_saved' ), 10, 3 );
-			//add_action( 'post_updated', array( $this, 'post_updated' ), 10, 3 );
-			//add_action( 'epc_new_bbpress_item', array( $this, 'post_updated' ), 10, 3 );  // Support for bbPress 2
 			// register script
 			add_action('admin_enqueue_scripts', array($this, 'register_scripts'));
-
 		}
 
 		if ( current_user_can( 'manage_options' ) ) {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ), 115 );
 		}
+		if(is_admin()){
+			add_action( 'load-post.php', array($this, 'init_metabox') );
+			add_action( 'load-post-new.php', array($this, 'init_metabox') );
+	
+		}
 	}
 	
+	public function init_metabox() {
+        add_action( 'add_meta_boxes', array( $this, 'add_metabox'  )        );
+        add_action( 'save_post',      array( $this, 'save_metabox' ), 10, 2 );
+	}
+	
+    public function add_metabox() {
+        add_meta_box(
+            'my-meta-box',
+            __( 'My Meta Box', 'textdomain' ),
+            array( $this, 'render_metabox' ),
+            'post',
+            'advanced',
+            'default'
+        );
+ 
+    }
+    /**
+     * Renders the meta box.
+     */
+    public function render_metabox( $post ) {
+        // Add nonce for security and authentication.
+        wp_nonce_field( 'custom_nonce_action', 'custom_nonce' );
+    }
+    /**
+     * Handles saving the meta box.
+     *
+     * @param int     $post_id Post ID.
+     * @param WP_Post $post    Post object.
+     * @return null
+     */
+    public function save_metabox( $post_id, $post ) {
+        // Add nonce for security and authentication.
+        $nonce_name   = isset( $_POST['custom_nonce'] ) ? $_POST['custom_nonce'] : '';
+        $nonce_action = 'custom_nonce_action';
+ 
+        // Check if nonce is set.
+        if ( ! isset( $nonce_name ) ) {
+            return;
+        }
+ 
+        // Check if nonce is valid.
+        if ( ! wp_verify_nonce( $nonce_name, $nonce_action ) ) {
+            return;
+        }
+ 
+        // Check if user has permissions to save data.
+        if ( ! current_user_can( 'edit_post', $post_id ) ) {
+            return;
+        }
+ 
+        // Check if not an autosave.
+        if ( wp_is_post_autosave( $post_id ) ) {
+            return;
+        }
+ 
+        // Check if not a revision.
+        if ( wp_is_post_revision( $post_id ) ) {
+            return;
+        }
+    }
+	
+
 	function register_scripts($page) {
 		global $post; 
 	    if ( $page == 'post-new.php' || $page == 'post.php' ) {
