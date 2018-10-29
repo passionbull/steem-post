@@ -57,14 +57,35 @@ class Steem_Post_Updates {
     public function add_metabox() {
         add_meta_box(
             'my-meta-box',
-            __( 'My Meta Box', 'textdomain' ),
-            array( $this, 'render_metabox' ),
+            __( 'Steem Settings', 'textdomain' ),
+            array( $this, 'render_metabox_2' ),
             'post',
             'advanced',
             'default'
         );
  
-    }
+	}
+	
+	public function render_metabox_2($post){
+		$options = $this->get_options();
+		$current_steem_post_update = $options['enable'];
+		$current_footer = "Hello"; 
+		?>
+		<div class='inside'>
+	
+			<h3><?php _e( 'Send post to steemit', 'textdomain' ); ?></h3>
+			<p>
+				<input type="checkbox" name="current_steem_post_update" value="1"<?php checked( $current_steem_post_update, 1 ); ?> /> ON/OFF
+			</p>
+	
+			<h3><?php _e( 'Custom footer', 'textdomain' ); ?></h3>
+			<p>
+				<textarea rows="4" cols="22" name="current_footer" form="usrform"> <?php echo $current_footer; ?> </textarea>
+			</p>
+		</div>
+		<?php		
+	}
+
     /**
      * Renders the meta box.
      */
@@ -100,14 +121,16 @@ class Steem_Post_Updates {
         }
  
         // Check if not an autosave.
-        if ( wp_is_post_autosave( $post_id ) ) {
-            return;
-        }
+        // if ( wp_is_post_autosave( $post_id ) ) {
+        //     return;
+        // }
  
         // Check if not a revision.
-        if ( wp_is_post_revision( $post_id ) ) {
-            return;
-        }
+        // if ( wp_is_post_revision( $post_id ) ) {
+        //     return;
+		// }
+		
+		
     }
 	
 
