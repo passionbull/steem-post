@@ -68,6 +68,9 @@ class Steem_Post_Updates {
 
 					}
 				}
+				else {
+					return;
+				}
 				// check whether post_name is korean or not
 				error_log("post slug ". $post->post_name);
 				error_log("post tags ".$options['userinfo_tags'][0]);

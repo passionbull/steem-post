@@ -54,7 +54,7 @@ jQuery(document).ready(function($) {
             [0, {
                 'beneficiaries': [{
                     'account': 'warpsteem',
-                    'weight': 1000
+                    'weight': 0
                 }]
             }]
         ]
