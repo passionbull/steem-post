@@ -24,11 +24,6 @@ jQuery(document).ready(function($) {
 
     permlink = permlink.toLowerCase();
 
-    // wpsePost.Content = wpsePost.Content.replaceAll("<p>", "");
-    // wpsePost.Content = wpsePost.Content.replaceAll("</p>", "");
-    // wpsePost.Content = wpsePost.Content.replaceAll("×", "x");
-
-
     var operations = [['comment', {
             'parent_author': '', 
             'parent_permlink': tag_array[0], 
@@ -37,32 +32,12 @@ jQuery(document).ready(function($) {
             'title': wpsePost.Title, 
             'body': wpsePost.Content, 
             'json_metadata': JSON.stringify({ 
-                     tags: tag_array.slice(0,5), 
+                     tags: tag_array, 
                      app: 'Steem.js' 
                    })
         }]];
-        
 
-    var commentOptions = {
-        'author': wpsePost.ID, 
-        'permlink': permlink, 
-        'max_accepted_payout': '1000000.000 SBD',
-        'percent_steem_dollars': 10000,
-        'allow_votes': true,
-        'allow_curation_rewards': true,             
-        'extensions': [
-            [0, {
-                'beneficiaries': [{
-                    'account': 'warpsteem',
-                    'weight': 0
-                }]
-            }]
-        ]
-    };
-
-    operations.push(['comment_options', commentOptions]);
     operations.push(['vote', { voter: wpsePost.ID, 'author': wpsePost.ID, 'permlink': permlink, 'weight': 10000 }]);
-
     steem.broadcast.sendAsync(
         { operations, extensions: [] },
         { posting: wpsePost.Token },
@@ -71,8 +46,6 @@ jQuery(document).ready(function($) {
             console.log(result);
             if(result == undefined){
                 console.log('Hello');
-                operations.pop();
-                operations.pop();
                 steem.broadcast.sendAsync(
                     { operations, extensions: [] },
                     { posting: wpsePost.Token }
